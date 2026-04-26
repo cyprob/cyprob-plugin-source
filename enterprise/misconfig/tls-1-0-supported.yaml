@@ -1,0 +1,34 @@
+id: tls-1-0-supported
+version: 1.0.0
+name: TLS 1.0 Supported
+type: misconfiguration
+description: |
+  Detects services that still negotiate TLS 1.0.
+info:
+  name: TLS 1.0 Supported
+  severity: medium
+  description: |
+    The service still supports TLS 1.0, which is deprecated and should be
+    disabled in favor of modern TLS versions.
+tier: community
+format: yaml
+target_scope: SERVICE
+execution_phase: vuln_scan
+tech_tags:
+  - tls
+  - ssl
+checks:
+  - id: tls-1-0-supported
+    name: TLS 1.0 Supported
+    severity: medium
+    description: |
+      The exposed service negotiated TLS 1.0 during the native TLS probe.
+    matchers:
+      - field: facts.transport.tls_version
+        operator: glob
+        pattern: "TLS1.0"
+    metadata:
+      cwe: CWE-327
+      references: "https://datatracker.ietf.org/doc/html/rfc8996"
+      remediation: "Disable TLS 1.0 and require TLS 1.2 or newer."
+      detected_condition: "TLS negotiation reported TLS1.0"

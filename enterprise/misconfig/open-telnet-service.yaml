@@ -1,0 +1,32 @@
+id: open-telnet-service
+version: 1.0.0
+name: Telnet Service Exposed
+type: misconfiguration
+description: |
+  Detects reachable Telnet services and reports cleartext remote-access exposure.
+info:
+  name: Telnet Service Exposed
+  severity: info
+  description: |
+    The target exposes a reachable Telnet service. Telnet transmits authentication
+    and session data in cleartext and should not be exposed on modern networks.
+tier: community
+format: yaml
+target_scope: SERVICE
+execution_phase: vuln_scan
+tech_tags:
+  - telnet
+checks:
+  - id: telnet-service-exposed
+    name: Telnet Service Exposed
+    severity: info
+    description: |
+      The service was identified as Telnet during native protocol enrichment.
+    matchers:
+      - field: facts.service.name
+        operator: glob
+        pattern: "telnet"
+    metadata:
+      cwe: CWE-319
+      references: "https://www.cisa.gov/uscert/ncas/alerts/TA13-175A"
+      detected_condition: "Reachable Telnet service identified on target port"

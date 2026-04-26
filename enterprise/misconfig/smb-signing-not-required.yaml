@@ -1,0 +1,38 @@
+id: smb-signing-not-required
+version: 1.0.0
+name: SMB Signing Is Not Required
+type: misconfiguration
+description: |
+  Detects SMB services that do not require message signing.
+info:
+  name: SMB Signing Is Not Required
+  severity: medium
+  description: |
+    The SMB service does not require message signing. This weakens integrity
+    protections and can enable relay and machine-in-the-middle style attacks
+    on affected networks.
+tier: community
+format: yaml
+target_scope: SERVICE
+execution_phase: vuln_scan
+tech_tags:
+  - smb
+checks:
+  - id: smb-signing-not-required
+    name: SMB signing is not required
+    severity: medium
+    description: |
+      The SMB probe reported that signing is not required on the exposed SMB
+      service.
+    matchers:
+      - field: facts.service.name
+        operator: glob
+        pattern: "smb"
+      - field: smb_signing_required
+        operator: glob
+        pattern: "false"
+    metadata:
+      cwe: CWE-300
+      references: "https://learn.microsoft.com/en-us/windows-server/storage/file-server/smb-signing"
+      remediation: "Require SMB signing on servers and clients where SMB exposure is necessary."
+      detected_condition: "SMB signing required flag reported as false"

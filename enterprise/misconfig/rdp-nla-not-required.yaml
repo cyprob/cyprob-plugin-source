@@ -1,0 +1,38 @@
+id: rdp-nla-not-required
+version: 1.0.0
+name: RDP NLA Not Required
+type: misconfiguration
+description: |
+  Detects RDP services that negotiate TLS without requiring Network Level
+  Authentication.
+info:
+  name: RDP NLA Not Required
+  severity: medium
+  description: |
+    The RDP service does not require Network Level Authentication. This weakens
+    the pre-authentication posture of the exposed Remote Desktop surface.
+tier: community
+format: yaml
+target_scope: SERVICE
+execution_phase: vuln_scan
+tech_tags:
+  - rdp
+checks:
+  - id: rdp-nla-not-required
+    name: RDP NLA Not Required
+    severity: medium
+    description: |
+      The RDP native probe negotiated TLS instead of HYBRID/HYBRID_EX, which
+      indicates NLA is not required on the exposed service.
+    matchers:
+      - field: facts.service.name
+        operator: glob
+        pattern: "rdp"
+      - field: native_probe_data.rdp.selected_protocol
+        operator: glob
+        pattern: "tls"
+    metadata:
+      cwe: CWE-288
+      references: "https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/remotepc/remote-desktop-allow-access"
+      remediation: "Require Network Level Authentication for Remote Desktop services."
+      detected_condition: "RDP selected_protocol reported as tls instead of hybrid"

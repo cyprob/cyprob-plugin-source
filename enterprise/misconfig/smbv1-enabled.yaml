@@ -1,0 +1,36 @@
+id: smbv1-enabled
+version: 1.0.0
+name: SMBv1 Enabled
+type: misconfiguration
+description: |
+  Detects SMB services that still expose the legacy SMBv1 protocol.
+info:
+  name: SMBv1 Enabled
+  severity: high
+  description: |
+    The SMB service exposes SMBv1. SMBv1 is obsolete and should be disabled in
+    modern environments because it materially increases attack surface.
+tier: community
+format: yaml
+target_scope: SERVICE
+execution_phase: vuln_scan
+tech_tags:
+  - smb
+checks:
+  - id: smbv1-enabled
+    name: SMBv1 Enabled
+    severity: high
+    description: |
+      The SMB probe reported SMBv1 support on the exposed service.
+    matchers:
+      - field: facts.service.name
+        operator: glob
+        pattern: "smb"
+      - field: smb_version
+        operator: glob
+        pattern: "smb1"
+    metadata:
+      cwe: CWE-1104
+      references: "https://learn.microsoft.com/en-us/windows-server/storage/file-server/troubleshoot/detect-enable-and-disable-smbv1-v2-v3"
+      remediation: "Disable SMBv1 support on servers and clients."
+      detected_condition: "SMB protocol version reported as smb1"
